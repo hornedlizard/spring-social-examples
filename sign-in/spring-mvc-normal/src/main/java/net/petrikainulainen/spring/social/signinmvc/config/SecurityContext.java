@@ -6,6 +6,7 @@ import net.petrikainulainen.spring.social.signinmvc.user.repository.UserReposito
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -14,6 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.cafe24.security.Cafe24AuthenticationService;
+import org.springframework.social.connect.ConnectionFactoryLocator;
+import org.springframework.social.security.SocialAuthenticationServiceRegistry;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
 
@@ -22,6 +26,7 @@ import org.springframework.social.security.SpringSocialConfigurer;
  */
 @Configuration
 @EnableWebSecurity
+@EnableJpaRepositories
 public class SecurityContext extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -57,7 +62,10 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
                                 "/auth/**",
                                 "/login",
                                 "/signup/**",
-                                "/user/register/**"
+                                "/user/register/**",
+                                "/test/**",
+                                "/test2/**",
+                                "/connect/**"
                         ).permitAll()
                         //The rest of the our application is protected.
                         .antMatchers("/**").hasRole("USER")
@@ -85,6 +93,10 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder(10);
     }
 
+    /*@Bean
+    public ConnectionFactoryLocator connectionFactoryLocator() {
+        return new SocialAuthenticationServiceRegistry().setAuthenticationServices(new Cafe24AuthenticationService("appId", "appSecret"));
+    }*/
     /**
      * This bean is used to load the user specific data when social sign in
      * is used.

@@ -4,10 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
@@ -21,7 +18,8 @@ import java.util.Properties;
 @ComponentScan(basePackages = {
         "net.petrikainulainen.spring.social.signinmvc.common.controller",
         "net.petrikainulainen.spring.social.signinmvc.security.controller",
-        "net.petrikainulainen.spring.social.signinmvc.user.controller"
+        "net.petrikainulainen.spring.social.signinmvc.user.controller",
+        "net.petrikainulainen.spring.social.signinmvc.test"
 })
 @EnableWebMvc
 public class WebAppContext extends WebMvcConfigurerAdapter {
@@ -70,4 +68,5 @@ public class WebAppContext extends WebMvcConfigurerAdapter {
 
         return viewResolver;
     }
+
 }

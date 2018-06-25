@@ -55,12 +55,26 @@
             <h2><spring:message code="label.social.sign.in.title"/></h2>
             <div class="row social-button-row">
                 <div class="col-lg-4">
-                    <a href="${pageContext.request.contextPath}/auth/facebook"><button class="btn btn-facebook"><i class="icon-facebook"></i> | <spring:message code="label.facebook.sign.in.button"/></button></a>
+                    <a href="${pageContext.request.contextPath}/auth/cafe24"><button class="btn btn-facebook"><i class="icon-facebook"></i> | <spring:message code="label.facebook.sign.in.button"/></button></a>
                 </div>
             </div>
             <div class="row social-button-row">
                 <div class="col-lg-4">
                     <a href="${pageContext.request.contextPath}/auth/twitter"><button class="btn btn-twitter"><i class="icon-twitter"></i> | <spring:message code="label.twitter.sign.in.button"/></button></a>
+                </div>
+            </div>
+
+            <div class="row social-button-row">
+                <div class="col-lg-4">
+                    <form action="<c:url value="/connect/cafe24" />" method="POST">
+                        <input type="hidden" name="scope" value="mall.read_application,mall.write_application,mall.read_order,mall.read_product,mall.write_product,mall.read_customer,mall.read_personal" />
+                        <input type="hidden" name="redirect_uri" value="https://devbit004.cafe24.com" />
+                        <input type="hidden" name="mall_id" value="utkg3000" />
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                        <p>You haven't created any connections with Cafe24 yet. Click the button to create
+                            a connection</p>
+                        <p><button type="submit"/></p>
+                    </form>
                 </div>
             </div>
         </div>
