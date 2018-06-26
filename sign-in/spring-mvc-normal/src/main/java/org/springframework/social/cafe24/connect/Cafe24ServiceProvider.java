@@ -16,11 +16,9 @@ public class Cafe24ServiceProvider extends AbstractOAuth2ServiceProvider<Cafe24>
 		logger.info("Cafe24ServiceProvider started");
 	}
 
-	public Cafe24ServiceProvider(String clientId, String clientSecret) {
-		this(clientId, clientSecret, null, null);
-	}
-	public Cafe24ServiceProvider(String appId, String appSecret, String redirectUri, String mallId) {
-		super(new Cafe24OAuth2Template(appId, appSecret, redirectUri, mallId));
+
+	public Cafe24ServiceProvider(String appId, String appSecret, String redirectUri) {
+		super(new Cafe24OAuth2Template(appId, appSecret, redirectUri));
 	}
 	
 	/*private static OAuth2Template getOAuth2Template(String appId, String appSecret) {

@@ -22,7 +22,7 @@ public class Cafe24ApiTest {
     @RequestMapping(value = "/test_auth", method = RequestMethod.GET)
     public void testAuth( HttpServletResponse response) {
         Cafe24ConnectionFactory connectionFactory
-                = new Cafe24ConnectionFactory("JoBu2I4jB9tm4ajgPG53gB", "UBIFWXsaDNMgUYdxqN9wtD");
+                = new Cafe24ConnectionFactory("JoBu2I4jB9tm4ajgPG53gB", "UBIFWXsaDNMgUYdxqN9wtD", "https://devbit004.cafe24.com");
         OAuth2Operations oAuth2Operations = connectionFactory.getOAuthOperations();
         OAuth2Parameters params = new OAuth2Parameters();
         params.setRedirectUri("https://devbit004.cafe24.com");

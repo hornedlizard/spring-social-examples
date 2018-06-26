@@ -69,9 +69,9 @@ public class SocialContext implements SocialConfigurer {
         Cafe24ConnectionFactory ccf = new Cafe24ConnectionFactory(
                 env.getProperty("cafe24.app.id"),
                 env.getProperty("cafe24.app.secret"),
-                env.getProperty("cafe24.redirect.uri"),
-                env.getProperty("cafe24.mall.id")
+                env.getProperty("cafe24.redirect.uri")
         );
+
         cfConfig.addConnectionFactory(ccf);
     }
 
@@ -111,34 +111,5 @@ public class SocialContext implements SocialConfigurer {
         return connectController;
     }
 
-    @Bean(name = "cafe24OauthResource")
-    public BaseOAuth2ProtectedResourceDetails getCafe24OauthResource() {
-        final AuthorizationCodeResourceDetails details = new AuthorizationCodeResourceDetails() {
-            @Override
-            public String getPreEstablishedRedirectUri() {
-                final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-                if (requestAttributes instanceof ServletRequestAttributes) {
-                    final HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-                    return request.getRequestURL() + "?" + request.getQueryString() + "&addStuff";
-                }
-
-                return super.getPreEstablishedRedirectUri();
-            }
-        };
-//        details.setId("google-oauth-client");
-        logger.info("details.getPreEstablishedRedirectUri(): " + details.getPreEstablishedRedirectUri());
-        details.setClientId("JoBu2I4jB9tm4ajgPG53gB");
-        details.setClientSecret("UBIFWXsaDNMgUYdxqN9wtD");
-        details.setAccessTokenUri("https://www.googleapis.com/oauth2/v4/token");
-        details.setUserAuthorizationUri("https://accounts.google.com/o/oauth2/v2/auth");
-        details.setTokenName("authorization_code");
-//        details.setScope(Arrays.asList("https://mail.google.com/,https://www.googleapis.com/auth/gmail.modify"));
-        details.setPreEstablishedRedirectUri("https://devbiit004.cafe24.com/"); //TODO
-        details.setUseCurrentUri(false);
-        details.setAuthenticationScheme(AuthenticationScheme.query);
-        details.setClientAuthenticationScheme(AuthenticationScheme.form);
-        details.setGrantType(GrantType.AUTHORIZATION_CODE.toString());
-        return details;
-    }
 
 }

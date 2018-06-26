@@ -17,8 +17,8 @@
     <!--
         Configures FB and Twitter support.
     -->
-    <facebook:config app-id="${facebook.app.id}" app-secret="${facebook.app.secret}"/>
-    <twitter:config app-id="${twitter.consumer.key}" app-secret="${twitter.consumer.secret}"/>
+    <!--<facebook:config app-id="${facebook.app.id}" app-secret="${facebook.app.secret}"/>
+    <twitter:config app-id="${twitter.consumer.key}" app-secret="${twitter.consumer.secret}"/>-->
 
     <!--
         Configures the connection repository. This application uses JDBC
