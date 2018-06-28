@@ -1,5 +1,6 @@
 package org.springframework.social.cafe24.connect;
 
+import com.sun.istack.internal.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
@@ -7,41 +8,52 @@ import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.social.oauth2.GrantType;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.social.oauth2.OAuth2Template;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Cafe24OAuth2Template extends OAuth2Template {
     private static final Logger logger = LoggerFactory.getLogger(Cafe24OAuth2Template.class);
 
     private final String redirectUri;
     private final String clientInfo;
+    private final String scope;
+    private final String clientId;
+    private final String clientSecret;
 
-    public Cafe24OAuth2Template(String appId, String appSecret, String redirectUri) {
+    private static String mallId;
+
+    public Cafe24OAuth2Template(String appId, String appSecret, String redirectUri, String scope) {
         super(appId, appSecret, getAuthorizeUrl(), getAccessTokenUrl());
         logger.info("Cafe24OAuth2Template appId: " + appId);
         logger.info("Cafe24OAuth2Template appSecret: " + appSecret);
         this.redirectUri = redirectUri;
         this.clientInfo = "client_id=" + formEncode(appId);
+        this.scope = scope;
+        this.clientId = appId;
+        this.clientSecret = appSecret;
     }
 
     protected static String getAuthorizeUrl() {
-        String authorizeUrl = "https://null.cafe24api.com/api/v2/oauth/authorize";
+        String authorizeUrl = "https://" + mallId + ".cafe24api.com/api/v2/oauth/authorize";
         logger.info("getAuthorizeUrl authorizeUrl: " + authorizeUrl);
         return authorizeUrl;
     }
 
     protected static String getAccessTokenUrl() {
-        String accessTokenUrl = "https://null.cafe24api.com/api/v2/oauth/token";
+        String accessTokenUrl = "https://" + mallId + ".cafe24api.com/api/v2/oauth/token";
         logger.info("getAccessTokenUrl accessTokenUrl: " + accessTokenUrl);
         return accessTokenUrl;
     }
+
+
 
     @Override
     protected AccessGrant createAccessGrant(String accessToken,
@@ -49,7 +61,19 @@ public class Cafe24OAuth2Template extends OAuth2Template {
                                             String refreshToken,
                                             Long expiresIn,
                                             Map<String, Object> response) {
-        return super.createAccessGrant(accessToken, scope, refreshToken, expiresIn, response);
+        logger.info("createAccessGrant accessToken: " + accessToken);
+        logger.info("createAccessGrant scope: " + scope);
+        logger.info("createAccessGrant refreshToken: " + refreshToken);
+        logger.info("createAccessGrant expiresIn: " + expiresIn);
+        Set<String> keys = response.keySet();
+        for (String key : keys) {
+            logger.info("createAccessGrant response.get(" + key + "): " + response.get(key));
+        }
+
+        AccessGrant createdAccessGrant = super.createAccessGrant(accessToken, scope, refreshToken, expiresIn, response);
+        logger.info("createAccessGrant createdAccessGrant.getAccessToken(): " + createdAccessGrant.getAccessToken());
+
+        return createdAccessGrant;
     }
 
 
@@ -66,7 +90,10 @@ public class Cafe24OAuth2Template extends OAuth2Template {
         logger.info("buildAuthenticateUrl redirectUri" + redirectUri);
 
         if (redirectUri != null) parameters.setRedirectUri(redirectUri);
-        return super.buildAuthenticateUrl(grantType, parameters);
+//        super.buildAuthenticateUrl(grantType, parameters);
+        String authenticateUrl = customBuildAuthUrl(grantType, parameters);
+        logger.info("buildAuthenticateUrl authenticateUrl: " + authenticateUrl);
+        return authenticateUrl;
     }
 
     @Override
@@ -98,14 +125,62 @@ public class Cafe24OAuth2Template extends OAuth2Template {
     public AccessGrant exchangeForAccess(String authorizationCode,
                                          String redirectUri,
                                          MultiValueMap<String, String> additionalParameters) {
-        return super.exchangeForAccess(authorizationCode,
-                                        this.redirectUri != null ? this.redirectUri : redirectUri,
-                                        additionalParameters);
+        logger.info("exchangeForAccess 1");
+        logger.info("exchangeForAccess authorizationCode: " + authorizationCode);
+        logger.info("exchangeForAccess redirectUri: " + redirectUri);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+        params.set("client_id", clientId);
+        params.set("client_secret", clientSecret);
+
+        params.set("code", authorizationCode);
+        params.set("redirect_uri", redirectUri);
+        params.set("grant_type", "authorization_code");
+        logger.info("exchangeForAccess 2");
+
+        if (additionalParameters != null) {
+            logger.info("exchangeForAccess 3");
+
+            params.putAll(additionalParameters);
+        }
+        logger.info("exchangeForAccess 4");
+
+        Map map = getRestTemplate().postForObject(getAccessTokenUrl(), params, Map.class);
+        logger.info("exchangeForAccess accessGrant map.get(access_token): "  + map.get("access_token"));
+        logger.info("exchangeForAccess accessGrant map.get(refresh_token): "  + map.get("refresh_token"));
+
+        AccessGrant accessGrant = createAccessGrantForExchange(map);
+        logger.info("exchangeForAccess accessGrant getAccessToken: "  + accessGrant.getAccessToken());
+        return null;
     }
 
+    private AccessGrant createAccessGrantForExchange(Map<String, Object> result) {
+        String accessToken = (String) result.get("access_token");
+        String refreshToken = (String) result.get("refresh_token");
+        String  strIssuedAt = (String) result.get("issued_at");
+        Long issuedAt = stringToDate(strIssuedAt);
+        String  strExpiresAt = (String) result.get("expires_at");
+        Long expiresAt = stringToDate(strExpiresAt);
+
+        logger.info("createAccessGrantForExchange issuedAt: " + issuedAt);
+        logger.info("createAccessGrantForExchange expiresAt: " + expiresAt);
+        Long expiresIn = null;
+        if (issuedAt != null && expiresAt != null) {
+            expiresIn = expiresAt - issuedAt;
+        }
+
+        logger.info("createAccessGrantForExchange accessToken: " + accessToken);
+        logger.info("createAccessGrantForExchange refreshToken: " + refreshToken);
+        logger.info("createAccessGrantForExchange expiresIn: " + expiresIn);
+
+        return new AccessGrant(accessToken, scope, refreshToken, expiresIn);
+    }
+
+
     private String customBuildAuthUrl(GrantType grantType, OAuth2Parameters parameters) {
+        mallId = parameters.get("mall_id").get(0);
         String baseAuthUrl = "https://"
-                + parameters.get("mall_id").get(0)
+                + mallId
                 + ".cafe24api.com/api/v2/oauth/authorize?" + clientInfo;
         parameters.remove("mall_id");
         StringBuilder authUrl = new StringBuilder(baseAuthUrl);
@@ -122,6 +197,7 @@ public class Cafe24OAuth2Template extends OAuth2Template {
                 authUrl.append('&').append(name).append('=').append(formEncode(values.next()));
             }
         }
+        authUrl.append("&").append("scope").append("=").append(scope);
         return authUrl.toString();
     }
 
@@ -134,5 +210,27 @@ public class Cafe24OAuth2Template extends OAuth2Template {
             throw new IllegalStateException(ex);
         }
     }
+
+    private static Long stringToDate(String str){
+        Long result = null;
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        try {
+            Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S").parse(str);
+            logger.info("stringToDate date: " + date.toString());
+            result = date.getTime();
+            logger.info("stringToDate result: " + result);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
+    public static String getMallId() {
+        return mallId;
+    }
+
 
 }

@@ -59,6 +59,8 @@ public class Cafe24ConfigBeanDefinitionParser extends AbstractProviderConfigBean
 	protected String getRedirectUri(Map<String, Object> allAttributes) {
 		if (allAttributes.containsKey("redirect_uri")) {
 			String redirectUri = (String)allAttributes.get("redirect_uri");
+			logger.info("getRedirectUri redirectUri: " + redirectUri);
+
 			return redirectUri.isEmpty() ? null : redirectUri;
 		}
 
@@ -68,6 +70,8 @@ public class Cafe24ConfigBeanDefinitionParser extends AbstractProviderConfigBean
 	protected String getMallId(Map<String, Object> allAttributes) {
 		if (allAttributes.containsKey("mall_id")) {
 			String mallId = (String)allAttributes.get("mall_id");
+			logger.info("getMallId mallId: " + mallId);
+
 			return mallId.isEmpty() ? null : mallId;
 		}
 

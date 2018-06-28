@@ -66,9 +66,8 @@
 
             <div class="row social-button-row">
                 <div class="col-lg-4">
-                    <form action="<c:url value="/connect/cafe24" />" method="POST">
-                        <input type="hidden" name="scope" value="mall.read_application,mall.write_application,mall.read_order,mall.read_product,mall.write_product,mall.read_customer,mall.read_personal" />
-                        <input type="hidden" name="mall_id" value="solendless" />
+                    <form action="<c:url value="/connect2/cafe24" />" method="POST">
+                        <input type="hidden" name="mall_id" value="utkg3000" />
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <p>You haven't created any connections with Cafe24 yet. Click the button to create
                             a connection</p>

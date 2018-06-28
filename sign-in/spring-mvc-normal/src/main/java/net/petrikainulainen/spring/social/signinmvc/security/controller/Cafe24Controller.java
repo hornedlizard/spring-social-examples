@@ -24,20 +24,14 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller("cafe24Controller")
-@RequestMapping("/test2")
+@RequestMapping("/connect")
 public class Cafe24Controller extends ConnectController {
     private static final Logger logger = LoggerFactory.getLogger(Cafe24Controller.class);
     private final ConnectionFactoryLocator connectionFactoryLocator;
     private final ConnectionRepository connectionRepository;
     private ConnectSupport connectSupport;
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
-    */
-/**
-     * Constructs a ConnectController.
-     *
-     * @param connectionFactoryLocator the locator for {@link ConnectionFactory} instances needed to establish connections
-     * @param connectionRepository     the current user's {@link ConnectionRepository} needed to persist connections; must be a proxy to a request-scoped bean
-     *//*
+
 
     @Inject
     public Cafe24Controller(ConnectionFactoryLocator connectionFactoryLocator, ConnectionRepository connectionRepository) {
@@ -47,34 +41,17 @@ public class Cafe24Controller extends ConnectController {
         this.connectionRepository = connectionRepository;
     }
 
-    @Override
-    @RequestMapping(value="/{providerId}", method=RequestMethod.POST)
-    public RedirectView connect(@PathVariable String providerId, NativeWebRequest request) {
-        ConnectionFactory<?> connectionFactory = connectionFactoryLocator.getConnectionFactory(providerId);
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        logger.info("buildOAuthUrl: " +  connectSupport.buildOAuthUrl(connectionFactory, request, parameters));
-        logger.info("redirect_uri: " + request.getParameter("redirect_uri"));
-        HttpServletRequest nativeRequest = request.getNativeRequest(HttpServletRequest.class);
-        logger.info("nativeRequest: " + nativeRequest.getRequestURI());
-        logger.info("nativeRequest getPathInfo: " + nativeRequest.getPathInfo());
-        logger.info("nativeRequest: " + nativeRequest.getServletPath());
+    @RequestMapping(value="/auth", method=RequestMethod.GET, params="code")
+    public RedirectView testAuth(@PathVariable(value = "providerId") String providerId, NativeWebRequest request) {
+        if (providerId == null) {
+            logger.info("code: " + request.getParameter("code"));
 
-        parameters.add("redirect_uri", request.getParameter("redirect_uri"));
-        logger.info("buildOAuthUrl: " +  connectSupport.buildOAuthUrl(connectionFactory, request, parameters));
-        logger.info("parameters.get(redirect_uri): "+ parameters.get("redirect_uri"));
-*/
-/*
-        connectSupport.setCallbackUrl(request.getParameter("redirect_uri"));
-        logger.info("buildOAuthUrl: " +  connectSupport.buildOAuthUrl(connectionFactory, request, parameters));
-        logger.info("parameters.get(redirect_uri): "+ parameters.get("redirect_uri"));*//*
-
-
-
-        try {
-            return new RedirectView(connectSupport.buildOAuthUrl(connectionFactory, request, parameters));
-        } catch (Exception e) {
-            return connectionStatusRedirect(providerId, request);
         }
+
+        return null;
     }
+
+
+
 }
 */

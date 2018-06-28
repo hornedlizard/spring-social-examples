@@ -9,9 +9,7 @@ import net.petrikainulainen.spring.social.signinmvc.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.ConnectionKey;
-import org.springframework.social.connect.UserProfile;
+import org.springframework.social.connect.*;
 import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 
 /**
@@ -40,9 +39,14 @@ public class RegistrationController {
 
     private UserService service;
 
+    private ProviderSignInUtils providerSignInUtils;
+
     @Autowired
-    public RegistrationController(UserService service) {
+    public RegistrationController(UserService service,
+                                  ConnectionFactoryLocator connectionFactoryLocator,
+                                  UsersConnectionRepository connectionRepository) {
         this.service = service;
+        this.providerSignInUtils = new ProviderSignInUtils(connectionFactoryLocator, connectionRepository);
     }
 
     /**
@@ -52,7 +56,7 @@ public class RegistrationController {
     public String showRegistrationForm(WebRequest request, Model model) {
         LOGGER.debug("Rendering registration page.");
 
-        Connection<?> connection = ProviderSignInUtils.getConnection(request);
+        Connection<?> connection = providerSignInUtils.getConnectionFromSession(request);
 
         RegistrationForm registration = createRegistrationDTO(connection);
         LOGGER.debug("Rendering registration form with information: {}", registration);
@@ -77,7 +81,6 @@ public class RegistrationController {
             dto.setEmail(socialMediaProfile.getEmail());
             dto.setFirstName(socialMediaProfile.getFirstName());
             dto.setLastName(socialMediaProfile.getLastName());
-
             ConnectionKey providerKey = connection.getKey();
             dto.setSignInProvider(SocialMediaService.valueOf(providerKey.getProviderId().toUpperCase()));
         }
@@ -116,7 +119,7 @@ public class RegistrationController {
         //If the user is signing in by using a social provider, this method call stores
         //the connection to the UserConnection table. Otherwise, this method does not
         //do anything.
-        ProviderSignInUtils.handlePostSignUp(registered.getEmail(), request);
+        providerSignInUtils.doPostSignUp(registered.getEmail(), request);
 
         return "redirect:/";
     }

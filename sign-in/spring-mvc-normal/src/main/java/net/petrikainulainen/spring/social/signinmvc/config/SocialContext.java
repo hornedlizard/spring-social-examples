@@ -1,5 +1,6 @@
 package net.petrikainulainen.spring.social.signinmvc.config;
 
+import net.petrikainulainen.spring.social.signinmvc.user.service.SimpleSignInAdapter;
 import net.petrikainulainen.spring.social.signinmvc.util.Cafe24Interceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,12 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.oauth2.client.resource.BaseOAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.security.oauth2.common.AuthenticationScheme;
 import org.springframework.social.UserIdSource;
 import org.springframework.social.cafe24.api.Cafe24;
+import org.springframework.social.cafe24.config.support.Cafe24UserIdSource;
 import org.springframework.social.cafe24.connect.Cafe24ConnectionFactory;
 import org.springframework.social.config.annotation.ConnectionFactoryConfigurer;
 import org.springframework.social.config.annotation.EnableSocial;
@@ -29,6 +33,7 @@ import org.springframework.social.connect.web.SignInAdapter;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.oauth2.GrantType;
 import org.springframework.social.security.AuthenticationNameUserIdSource;
+import org.springframework.social.security.SocialAuthenticationFilter;
 import org.springframework.social.twitter.connect.TwitterConnectionFactory;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -51,6 +56,17 @@ public class SocialContext implements SocialConfigurer {
     @Autowired
     private DataSource dataSource;
 
+    @Bean
+    public Cafe24ConnectionFactory cafe24ConnectionFactory(Environment env){
+        Cafe24ConnectionFactory cafe24ConnectionFactory = new Cafe24ConnectionFactory(
+                env.getProperty("cafe24.app.id"),
+                env.getProperty("cafe24.app.secret"),
+                env.getProperty("cafe24.redirect.uri"),
+                env.getProperty("cafe24.scope")
+        );
+        return cafe24ConnectionFactory;
+    }
+
     /**
      * Configures the connection factories for Facebook and Twitter.
      * @param cfConfig
@@ -63,16 +79,16 @@ public class SocialContext implements SocialConfigurer {
                 env.getProperty("twitter.consumer.key"),
                 env.getProperty("twitter.consumer.secret")
         ));*/
-        logger.info("cafe24 app id: " + env.getProperty("cafe24.app.id"));
+        /*logger.info("cafe24 app id: " + env.getProperty("cafe24.app.id"));
         logger.info("cafe24 app secret: " + env.getProperty("cafe24.app.secret"));
 
         Cafe24ConnectionFactory ccf = new Cafe24ConnectionFactory(
                 env.getProperty("cafe24.app.id"),
                 env.getProperty("cafe24.app.secret"),
                 env.getProperty("cafe24.redirect.uri")
-        );
+        );*/
 
-        cfConfig.addConnectionFactory(ccf);
+        cfConfig.addConnectionFactory(cafe24ConnectionFactory(env));
     }
 
     /**
@@ -81,22 +97,22 @@ public class SocialContext implements SocialConfigurer {
      */
     @Override
     public UserIdSource getUserIdSource() {
-        return new AuthenticationNameUserIdSource();
+
+//        return new AuthenticationNameUserIdSource();
+        return new Cafe24UserIdSource();
     }
+
 
     @Override
     public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
         logger.info("getUsersConnectionRepository started..." );
-        return new JdbcUsersConnectionRepository(
+        JdbcUsersConnectionRepository jdbcUsersConnectionRepository = new JdbcUsersConnectionRepository(
                 dataSource,
                 connectionFactoryLocator,
-                /**
-                 * The TextEncryptor object encrypts the authorization details of the connection. In
-                 * our example, the authorization details are stored as plain text.
-                 * DO NOT USE THIS IN PRODUCTION.
-                 */
                 Encryptors.noOpText()
         );
+
+        return jdbcUsersConnectionRepository;
     }
 
     /**
@@ -109,6 +125,18 @@ public class SocialContext implements SocialConfigurer {
         connectController.addInterceptor(new Cafe24Interceptor());
 
         return connectController;
+    }
+
+    /**
+     * The Spring MVC Controller that allows users to sign-in with their provider accounts.
+     */
+    @Bean
+    public ProviderSignInController providerSignInController(ConnectionFactoryLocator connectionFactoryLocator,
+                                                             UsersConnectionRepository usersConnectionRepository) {
+
+        return new ProviderSignInController(connectionFactoryLocator,
+                usersConnectionRepository,
+                new SimpleSignInAdapter());
     }
 
 

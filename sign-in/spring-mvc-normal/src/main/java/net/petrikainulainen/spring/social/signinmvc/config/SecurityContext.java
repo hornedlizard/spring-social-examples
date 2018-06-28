@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.social.cafe24.security.Cafe24AuthenticationService;
 import org.springframework.social.connect.ConnectionFactoryLocator;
+import org.springframework.social.security.SocialAuthenticationFilter;
 import org.springframework.social.security.SocialAuthenticationServiceRegistry;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
@@ -65,13 +66,15 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
                                 "/user/register/**",
                                 "/test/**",
                                 "/test2/**",
-                                "/connect/**"
+                                "/connect/**",
+                                "/connect2/**"
                         ).permitAll()
                         //The rest of the our application is protected.
                         .antMatchers("/**").hasRole("USER")
                 //Adds the SocialAuthenticationFilter to Spring Security's filter chain.
                 .and()
-                    .apply(new SpringSocialConfigurer());
+                    .apply(new SpringSocialConfigurer().postLoginUrl("/"));
+//                .and().addFilter(new SocialAuthenticationFilter( ));
     }
 
     /**

@@ -1,3 +1,4 @@
+/*
 package net.petrikainulainen.spring.social.signinmvc.test;
 
 import org.slf4j.Logger;
@@ -37,3 +38,4 @@ public class Cafe24ApiTest {
 
     }
 }
+*/

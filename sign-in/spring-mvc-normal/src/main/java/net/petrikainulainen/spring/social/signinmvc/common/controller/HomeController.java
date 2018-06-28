@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * @author Petri Kainulainen
- */
+ * @author Petri Kainulainen*/
+
+
 @Controller
 public class HomeController {
 
@@ -16,7 +17,7 @@ public class HomeController {
 
     protected static final String VIEW_NAME_HOMEPAGE = "index";
 
-    @RequestMapping(value="/", method = RequestMethod.GET)
+    @RequestMapping(value="/main", method = RequestMethod.GET)
     public String showHomePage() {
         LOGGER.debug("Rendering homepage.");
         return VIEW_NAME_HOMEPAGE;

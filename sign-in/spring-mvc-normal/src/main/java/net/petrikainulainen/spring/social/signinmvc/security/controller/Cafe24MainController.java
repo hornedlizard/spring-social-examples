@@ -22,13 +22,10 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-@Controller("cafe24Controller")
-@RequestMapping("/test2")
-public class Cafe24Controller2 {
-    private static final Logger logger = LoggerFactory.getLogger(Cafe24Controller2.class);
-    private final ConnectionFactoryLocator connectionFactoryLocator;
-    private final ConnectionRepository connectionRepository;
-    private ConnectSupport connectSupport;
+@Controller("cafe24MainController")
+public class Cafe24MainController extends ConnectController{
+    private static final Logger logger = LoggerFactory.getLogger(Cafe24MainController.class);
+
     */
 /**
      * Constructs a ConnectController.
@@ -38,9 +35,18 @@ public class Cafe24Controller2 {
      *//*
 
     @Inject
-    public Cafe24Controller2(ConnectionFactoryLocator connectionFactoryLocator, ConnectionRepository connectionRepository) {
-        this.connectionFactoryLocator = connectionFactoryLocator;
-        this.connectionRepository = connectionRepository;
+    public Cafe24MainController(ConnectionFactoryLocator connectionFactoryLocator, ConnectionRepository connectionRepository) {
+        super(connectionFactoryLocator, connectionRepository);
+    }
+
+    @RequestMapping(value="/auth", method=RequestMethod.GET, params="code")
+    public RedirectView oauth2Callback(@PathVariable(value = "providerId") String providerId, NativeWebRequest request) {
+        if (providerId == null) {
+            logger.info("code: " + request.getParameter("code"));
+
+        }
+
+        return super.oauth2Callback(providerId, request);
     }
 
 

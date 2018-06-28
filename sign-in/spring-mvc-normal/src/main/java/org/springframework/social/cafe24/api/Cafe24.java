@@ -4,6 +4,7 @@ import org.springframework.social.ApiBinding;
 
 public interface Cafe24 extends ApiBinding {
 
+
 	
 	
 }

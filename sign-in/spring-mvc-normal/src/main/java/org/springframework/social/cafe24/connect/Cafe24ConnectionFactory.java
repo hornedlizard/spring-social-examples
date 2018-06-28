@@ -12,10 +12,12 @@ public class Cafe24ConnectionFactory extends OAuth2ConnectionFactory<Cafe24> {
 	static {
 		logger.info("Cafe24ConnectionFactory started");
 	}
-	public Cafe24ConnectionFactory(String appId, String appSecret, String redirectUri) {
+	public Cafe24ConnectionFactory(String appId, String appSecret, String redirectUri, String scope) {
 //		this(appId, appSecret, null, null);
-		super("cafe24", new Cafe24ServiceProvider(appId, appSecret, redirectUri), new Cafe24Adapter());
+		super("cafe24", new Cafe24ServiceProvider(appId, appSecret, redirectUri, scope), new Cafe24Adapter());
 
 	}
+
+
 
 }

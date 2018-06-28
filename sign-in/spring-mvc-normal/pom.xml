@@ -19,10 +19,10 @@
         <liquibase.version>3.1.1</liquibase.version>
         <mysql.connector.version>5.1.26</mysql.connector.version>
         <slf4j.version>1.7.5</slf4j.version>
-        <spring.version>4.0.0.RELEASE</spring.version>
+        <spring.version>4.3.17.RELEASE</spring.version>
         <spring.data.jpa.version>1.4.3.RELEASE</spring.data.jpa.version>
         <spring.security.version>3.2.0.RELEASE</spring.security.version>
-        <spring.social.version>1.1.0.RELEASE</spring.social.version>
+        <spring.social.version>1.1.6.RELEASE</spring.social.version>
         <spring.social.facebook.version>1.1.0.RELEASE</spring.social.facebook.version>
         <spring.social.twitter.version>1.1.0.RELEASE</spring.social.twitter.version>
 
@@ -33,6 +33,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <profiles>
         <profile>
             <id>dev</id>
@@ -40,6 +41,7 @@
                 <build.profile.id>dev</build.profile.id>
             </properties>
         </profile>
+
         <profile>
             <id>integration-test</id>
             <properties>
@@ -347,6 +349,15 @@
             <artifactId>spring-social-web</artifactId>
             <version>${spring.social.version}</version>
         </dependency>
+
+        <!-- Jackson -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.9.5</version>
+        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2 -->
         <dependency>
