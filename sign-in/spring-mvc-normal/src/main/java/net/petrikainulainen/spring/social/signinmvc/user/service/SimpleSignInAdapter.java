@@ -30,6 +30,7 @@ public class SimpleSignInAdapter implements SignInAdapter {
             logger.info("signIn sendRedirect 실패");
             e.printStackTrace();
         }
+        logger.info("signIn return null");
 
         return null;
     }

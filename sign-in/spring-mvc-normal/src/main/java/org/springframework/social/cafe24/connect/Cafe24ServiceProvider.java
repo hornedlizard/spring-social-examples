@@ -4,13 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.social.cafe24.api.Cafe24;
 import org.springframework.social.cafe24.api.impl.Cafe24Template;
+import org.springframework.social.cafe24.config.support.Cafe24UserIdSource;
 import org.springframework.social.oauth2.AbstractOAuth2ServiceProvider;
 import org.springframework.social.oauth2.OAuth2Template;
+
+import javax.inject.Inject;
 
 public class Cafe24ServiceProvider extends AbstractOAuth2ServiceProvider<Cafe24> {
 
 	// private static final String URL = ".cafe24api.com/api/v2/oauth/";
-	// private String mallId = null;
+	private String mallId;
+
+	@Inject
+	private Cafe24UserIdSource cafe24UserIdSource;
+
 	private static final Logger logger = LoggerFactory.getLogger(Cafe24ServiceProvider.class);
 	static {
 		logger.info("Cafe24ServiceProvider started");
@@ -35,9 +42,18 @@ public class Cafe24ServiceProvider extends AbstractOAuth2ServiceProvider<Cafe24>
 
 	@Override
 	public Cafe24 getApi(String accessToken) {
+		logger.info("getApi accessToken: " + accessToken);
+//		String mallId = cafe24UserIdSource.getUserId();
+		String tmp = Cafe24OAuth2Template.getMallId();
+		this.mallId = tmp;
+		logger.info("getApi tmp: " + tmp);
+		logger.info("getApi mallId: " + mallId);
+
 		// TODO Auto-generated method stub
-		return new Cafe24Template(accessToken);
+		return new Cafe24Template(accessToken, tmp);
 	}
 
-
+	public String getMallId() {
+		return mallId;
+	}
 }

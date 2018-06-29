@@ -1,3 +1,4 @@
+/*
 package net.petrikainulainen.spring.social.signinmvc.user.controller;
 
 import net.petrikainulainen.spring.social.signinmvc.security.util.SecurityUtil;
@@ -24,9 +25,11 @@ import org.springframework.web.context.request.WebRequest;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+*/
 /**
  * @author Petri Kainulainen
- */
+ *//*
+
 @Controller
 @SessionAttributes("user")
 public class RegistrationController {
@@ -49,9 +52,11 @@ public class RegistrationController {
         this.providerSignInUtils = new ProviderSignInUtils(connectionFactoryLocator, connectionRepository);
     }
 
-    /**
+    */
+/**
      * Renders the registration page.
-     */
+     *//*
+
     @RequestMapping(value = "/user/register", method = RequestMethod.GET)
     public String showRegistrationForm(WebRequest request, Model model) {
         LOGGER.debug("Rendering registration page.");
@@ -66,13 +71,15 @@ public class RegistrationController {
         return VIEW_NAME_REGISTRATION_PAGE;
     }
 
-    /**
+    */
+/**
      * Creates the form object used in the registration form.
      * @param connection
      * @return  If a user is signing in by using a social provider, this method returns a form
      *          object populated by the values given by the provider. Otherwise this method returns
      *          an empty form object (normal form registration).
-     */
+     *//*
+
     private RegistrationForm createRegistrationDTO(Connection<?> connection) {
         RegistrationForm dto = new RegistrationForm();
 
@@ -88,9 +95,11 @@ public class RegistrationController {
         return dto;
     }
 
-    /**
+    */
+/**
      * Processes the form submissions of the registration form.
-     */
+     *//*
+
     @RequestMapping(value ="/user/register", method = RequestMethod.POST)
     public String registerUserAccount(@Valid @ModelAttribute("user") RegistrationForm userAccountData,
                                       BindingResult result,
@@ -124,10 +133,12 @@ public class RegistrationController {
         return "redirect:/";
     }
 
-    /**
+    */
+/**
      * Creates a new user account by calling the service method. If the email address is found
      * from the database, this method adds a field error to the email field of the form object.
-     */
+     *//*
+
     private User createUserAccount(RegistrationForm userAccountData, BindingResult result) {
         LOGGER.debug("Creating user account with information: {}", userAccountData);
         User registered = null;
@@ -169,3 +180,4 @@ public class RegistrationController {
         LOGGER.debug("Added field error: {} to binding result: {}", error, result);
     }
 }
+*/

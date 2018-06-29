@@ -33,6 +33,7 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserRepository userRepository;
 
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web
@@ -60,6 +61,7 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                         //Anyone can access the urls
                         .antMatchers(
+                                "/",
                                 "/auth/**",
                                 "/login",
                                 "/signup/**",
@@ -73,22 +75,23 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
                         .antMatchers("/**").hasRole("USER")
                 //Adds the SocialAuthenticationFilter to Spring Security's filter chain.
                 .and()
-                    .apply(new SpringSocialConfigurer().postLoginUrl("/"));
-//                .and().addFilter(new SocialAuthenticationFilter( ));
+                    /*.apply(new SpringSocialConfigurer())
+                .and()*/.csrf().disable();
+//                .addFilter(new SocialAuthenticationFilter( ));
     }
 
     /**
      * Configures the authentication manager bean which processes authentication
      * requests.
      */
-    @Override
+   /* @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .userDetailsService(userDetailsService())
                 .passwordEncoder(passwordEncoder());
     }
 
-    /**
+    *//**
      * This is used to hash the password of the user.
      */
     @Bean
@@ -112,8 +115,8 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
     /**
      * This bean is load the user specific data when form login is used.
      */
-    @Bean
+   /* @Bean
     public UserDetailsService userDetailsService() {
         return new RepositoryUserDetailsService(userRepository);
-    }
+    }*/
 }

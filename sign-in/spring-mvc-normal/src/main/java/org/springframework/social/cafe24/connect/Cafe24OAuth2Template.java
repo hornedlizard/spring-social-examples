@@ -3,11 +3,13 @@ package org.springframework.social.cafe24.connect;
 import com.sun.istack.internal.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.social.oauth2.GrantType;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.social.oauth2.OAuth2Template;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -98,11 +100,13 @@ public class Cafe24OAuth2Template extends OAuth2Template {
 
     @Override
     public String buildAuthorizeUrl(OAuth2Parameters parameters) {
+        logger.info("buildAuthorizeUrl1 started ");
         return buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, parameters);
     }
 
     @Override
     public String buildAuthorizeUrl(GrantType grantType, OAuth2Parameters parameters) {
+        logger.info("buildAuthorizeUrl2 started ");
 
         Set<String> keys = parameters.keySet();
         for (String key : keys) {
@@ -110,6 +114,9 @@ public class Cafe24OAuth2Template extends OAuth2Template {
         }
         for (String key : keys) {
             logger.info("buildAuthorizeUrl parameter.get(" + key + "): " + parameters.get(key));
+        }
+        if (parameters.get("mall_id") != null) {
+            this.mallId = String.valueOf(parameters.get("mall_id"));
         }
         logger.info("buildAuthorizeUrl redirectUri" + redirectUri);
 //        logger.info("buildAuthorizeUrl getAuthorizeUrl: " + getAuthorizeUrl(String.valueOf(parameters.get("mallId"))));
@@ -130,8 +137,16 @@ public class Cafe24OAuth2Template extends OAuth2Template {
         logger.info("exchangeForAccess redirectUri: " + redirectUri);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.set("client_id", clientId);
-        params.set("client_secret", clientSecret);
+        String clientInfo = clientId + ":" + clientSecret;
+        logger.info("clientId: " + clientId);
+        logger.info("clientSecret: " + clientSecret);
+        logger.info("clientInfo: " + clientInfo);
+        /*params.set("client_id", clientId);
+        params.set("client_secret", clientSecret);*/
+        byte[] base64EncodedClientInfo = Base64.getEncoder().encode(clientInfo.getBytes());
+
+        String base64EncodedStr = new String(base64EncodedClientInfo);
+        logger.info("base64EncodedClientInfo base64EncodedStr: " + base64EncodedStr);
 
         params.set("code", authorizationCode);
         params.set("redirect_uri", redirectUri);
@@ -145,13 +160,32 @@ public class Cafe24OAuth2Template extends OAuth2Template {
         }
         logger.info("exchangeForAccess 4");
 
-        Map map = getRestTemplate().postForObject(getAccessTokenUrl(), params, Map.class);
-        logger.info("exchangeForAccess accessGrant map.get(access_token): "  + map.get("access_token"));
-        logger.info("exchangeForAccess accessGrant map.get(refresh_token): "  + map.get("refresh_token"));
+        HttpHeaders headers = new HttpHeaders();
 
-        AccessGrant accessGrant = createAccessGrantForExchange(map);
+        String accessTokenUrl = getAccessTokenUrl();
+        RestTemplate restTemplate = getRestTemplate();
+
+        headers.set("Authorization", "Basic " + base64EncodedStr);
+        // headersForAccessToken.add("Content-Type", "application/x-www-form-urlencoded");
+        /* 헤더에 Content-Type 설정 */
+        headers.setContentType(new MediaType("application", "x-www-form-urlencoded"));
+
+
+        restTemplate.setDefaultUriVariables(params);
+
+        //MultiValueMap<String, String>는 파라미터의 타입
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+//        restTemplate.exchange(accessTokenUrl, HttpMethod.POST, entity, String.class);
+
+        ResponseEntity<Map> responseEntity = restTemplate.exchange(accessTokenUrl, HttpMethod.POST, entity, Map.class);
+
+   /*     logger.info("exchangeForAccess accessGrant map.get(access_token): "  + map.get("access_token"));
+        logger.info("exchangeForAccess accessGrant map.get(refresh_token): "  + map.get("refresh_token"));*/
+        logger.info("exchangeForAccess accessGrant map.get(refresh_token): " + responseEntity.getBody().get("access_token"));
+        AccessGrant accessGrant = createAccessGrantForExchange(responseEntity.getBody());
+
         logger.info("exchangeForAccess accessGrant getAccessToken: "  + accessGrant.getAccessToken());
-        return null;
+        return accessGrant;
     }
 
     private AccessGrant createAccessGrantForExchange(Map<String, Object> result) {
@@ -231,6 +265,9 @@ public class Cafe24OAuth2Template extends OAuth2Template {
     public static String getMallId() {
         return mallId;
     }
+
+
+
 
 
 }

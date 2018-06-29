@@ -64,6 +64,8 @@ public class Cafe24ConfigBeanDefinitionParser extends AbstractProviderConfigBean
 			return redirectUri.isEmpty() ? null : redirectUri;
 		}
 
+		logger.info("getRedirectUri return null");
+
 		return null;
 
 	}
@@ -74,6 +76,7 @@ public class Cafe24ConfigBeanDefinitionParser extends AbstractProviderConfigBean
 
 			return mallId.isEmpty() ? null : mallId;
 		}
+		logger.info("getMallId return null");
 
 		return null;
 

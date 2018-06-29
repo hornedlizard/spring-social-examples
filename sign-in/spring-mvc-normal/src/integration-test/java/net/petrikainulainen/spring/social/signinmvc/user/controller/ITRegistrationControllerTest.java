@@ -1,3 +1,4 @@
+/*
 package net.petrikainulainen.spring.social.signinmvc.user.controller;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -45,9 +46,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+*/
 /**
  * @author Petri Kainulainen
- */
+ *//*
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ExampleApplicationContext.class, IntegrationTestContext.class})
 //@ContextConfiguration(locations = {"classpath:exampleApplicationContext.xml", "classpath:applicationContext-integrationTest.xml"})
@@ -652,3 +655,4 @@ public class ITRegistrationControllerTest {
                 .andExpect(redirectedUrl("/"));
     }
 }
+*/

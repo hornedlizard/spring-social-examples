@@ -68,7 +68,6 @@
                 <div class="col-lg-4">
                     <form action="<c:url value="/connect2/cafe24" />" method="POST">
                         <input type="hidden" name="mall_id" value="utkg3000" />
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <p>You haven't created any connections with Cafe24 yet. Click the button to create
                             a connection</p>
                         <p><button type="submit" value="submit"/></p>

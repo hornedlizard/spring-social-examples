@@ -1,3 +1,4 @@
+/*
 package net.petrikainulainen.spring.social.signinmvc.security.service;
 
 import net.petrikainulainen.spring.social.signinmvc.security.dto.ExampleUserDetails;
@@ -16,9 +17,11 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+*/
 /**
  * @author Petri Kainulainen
- */
+ *//*
+
 @RunWith(MockitoJUnitRunner.class)
 public class SimpleSocialUserDetailsServiceTest {
 
@@ -70,3 +73,4 @@ public class SimpleSocialUserDetailsServiceTest {
         verifyNoMoreInteractions(userDetailsServicemock);
     }
 }
+*/

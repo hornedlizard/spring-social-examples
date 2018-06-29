@@ -4,6 +4,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.social.connect.UsersConnectionRepository;
 
 /**
  * @author Petri Kainulainen
@@ -17,6 +18,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 public class ExampleApplicationContext {
 
     private static final String MESSAGE_SOURCE_BASE_NAME = "i18n/messages";
+
 
     @Bean
     public MessageSource messageSource() {
@@ -32,4 +34,6 @@ public class ExampleApplicationContext {
     public PropertySourcesPlaceholderConfigurer propertyPlaceHolderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+
+
 }

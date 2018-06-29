@@ -16,7 +16,7 @@ import java.util.EnumSet;
  * @author Petri Kainulainen
  */
 public class ExampleApplicationConfig implements WebApplicationInitializer {
-    private static final String DISPATCHER_SERVLET_NAME = "dispatcher";
+    private static final String DISPATCHER_SERVLET_NAME = "spring";
     private static final String DISPATCHER_SERVLET_MAPPING = "/";
 
     @Override
