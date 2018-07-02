@@ -112,6 +112,7 @@ public class Cafe24Template extends AbstractOAuth2ApiBinding implements Cafe24 {
 
 
 		logger.info("fetchObjects uriBuilder will be called...");
+		/* URI 만들기 */
 		URIBuilder uriBuilder = URIBuilder.fromUri(uri).queryParams(queryParameters);
 		logger.info("fetchObjects uriBuilder created...");
 
@@ -127,9 +128,12 @@ public class Cafe24Template extends AbstractOAuth2ApiBinding implements Cafe24 {
 		/* 한글이 섞여있기 때문에 application/json;charset=UTF-8로 Content-Type 설정 */
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
 		/* RestTemplate을 쓰면 URLEncoder.encode(itemIds, "UTF-8");이 된다 */
+		/* API를 실제로 요청하는 부분 */
 		ResponseEntity<JsonNode> responseEntity
 				= getRestTemplate().exchange(uriBuilder.build(), HttpMethod.GET, httpEntity, JsonNode.class);
+
 
 		logger.info("fetchObjects responseEntity getStatusCode: "  + responseEntity.getStatusCode());
 		logger.info("fetchObjects responseEntity getStatusCodeValue: "  + responseEntity.getStatusCodeValue());

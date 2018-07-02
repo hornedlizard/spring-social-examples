@@ -95,8 +95,14 @@ public class LoginController extends ConnectController {
         logger.info("in /result handler");
         ProductOperations productTemplate = cafe24.productOperations();
 
+        Cafe24OAuth2Connection cafe24OAuth2Connection = (Cafe24OAuth2Connection) cafe24;
+        if (cafe24OAuth2Connection.hasExpired()) {
+            cafe24OAuth2Connection.refresh();
+        }
         List<Product> productList = productTemplate.getProducts();
         logger.info("oauth2Callback productList");
+
+
 
         if (productList != null) {
             for (Product product : productList) {
@@ -137,9 +143,6 @@ public class LoginController extends ConnectController {
 //            cafe24Template = (Cafe24Template) connection.getApi();
             Cafe24OAuth2Connection cafe24OAuth2Connection = (Cafe24OAuth2Connection) connection;
 
-            if (cafe24OAuth2Connection.hasExpired()) {
-                cafe24OAuth2Connection.refresh();
-            }
             this.cafe24 =  cafe24OAuth2Connection.getApi();
             addConnection(connection, connectionFactory, request);
             handleSignIn(connection, connectionFactory, request);

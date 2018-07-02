@@ -72,7 +72,7 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
                                 "/connect2/**"
                         ).permitAll()
                         //The rest of the our application is protected.
-                        .antMatchers("/**").hasRole("USER")
+                        .antMatchers("/admin").hasRole("USER")
                 //Adds the SocialAuthenticationFilter to Spring Security's filter chain.
                 .and()
                     /*.apply(new SpringSocialConfigurer())
