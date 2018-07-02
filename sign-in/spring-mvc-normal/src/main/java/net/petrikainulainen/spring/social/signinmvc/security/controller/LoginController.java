@@ -59,7 +59,6 @@ public class LoginController extends ConnectController {
     private UsersConnectionRepository usersConnectionRepository;
 
 
-    @Resource(name = "cafe24")
     private Cafe24 cafe24;
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
@@ -91,30 +90,11 @@ public class LoginController extends ConnectController {
     }
 
 
-
-    @RequestMapping(value="/oauthtest", method=RequestMethod.GET, params="code")
-    public String  testAuth(NativeWebRequest request) {
-        logger.info("testAuth code: " + request.getParameter("code"));
-        logger.info("testAuth state: " + request.getParameter("state"));
-//        usersConnectionRepository.createConnectionRepository()
-        try {
-            Field mallId = Cafe24OAuth2Template.class.getField("mallId");
-            logger.info("mallId.getName(): " + mallId.getName());
-            logger.info("mallId.getType(): " + mallId.getType());
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        return "testAuth";
-    }
-
     @RequestMapping(value = "/result")
     public String result(NativeWebRequest request) {
         logger.info("in /result handler");
-        Set<String> providerUserIds = new HashSet<>();
-        providerUserIds.add("utkg3000");
-
-
         ProductOperations productTemplate = cafe24.productOperations();
+
         List<Product> productList = productTemplate.getProducts();
         logger.info("oauth2Callback productList");
 
@@ -122,7 +102,7 @@ public class LoginController extends ConnectController {
             for (Product product : productList) {
                 logger.info("result getProductName: " + product.getProductName());
                 logger.info("result getProductName: " + product.getProductCode());
-                logger.info("result getProductName: " + product.getShopId());
+                logger.info("result getProductName: " + product.getShopNo());
             }
         } else {
             logger.info("result productList 가져오기 실패");
@@ -157,6 +137,9 @@ public class LoginController extends ConnectController {
 //            cafe24Template = (Cafe24Template) connection.getApi();
             Cafe24OAuth2Connection cafe24OAuth2Connection = (Cafe24OAuth2Connection) connection;
 
+            if (cafe24OAuth2Connection.hasExpired()) {
+                cafe24OAuth2Connection.refresh();
+            }
             this.cafe24 =  cafe24OAuth2Connection.getApi();
             addConnection(connection, connectionFactory, request);
             handleSignIn(connection, connectionFactory, request);
@@ -240,8 +223,6 @@ public class LoginController extends ConnectController {
 
     private RedirectView handleSignIn(Connection<?> connection, ConnectionFactory<?> connectionFactory, NativeWebRequest request) {
         logger.info("handleSignIn called...");
-
-
         List<String> userIds = usersConnectionRepository.findUserIdsWithConnection(connection);
         if (userIds.contains(Cafe24OAuth2Template.getMallId())) {
 
@@ -261,10 +242,10 @@ public class LoginController extends ConnectController {
             usersConnectionRepository.createConnectionRepository(userIds.get(0)).updateConnection(connection);
             String originalUrl = userCookieSignInAdapter.signIn(userIds.get(0), connection, request);
             postSignIn(connectionFactory, connection, request);
-            return originalUrl != null ? redirect(originalUrl) : redirect("/");
+            return originalUrl != null ? redirect(originalUrl) : redirect("/connect2/result");
         } else {
             logger.info("handleSignIn userIds.size() > 1");
-            return redirect(URIBuilder.fromUri("/").queryParam("error", "multiple_users").build().toString());
+            return redirect(URIBuilder.fromUri("/connect2/result").queryParam("error", "multiple_users").build().toString());
         }
     }
 

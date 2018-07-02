@@ -4,11 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
 
-public class Product {
+public class Product extends Cafe24Object {
     private static final Logger logger = LoggerFactory.getLogger(Product.class);
 
-    private final Long shopId;
+    private final Long shopNo;
 
     private final String productNo;
 
@@ -16,19 +17,26 @@ public class Product {
 
     private final String productName;
 
-    private final String imgPath;
+    private final List<String> listIamge;
+    static {
+        logger.info("Product.class static block");
+    }
 
-    public Product(Long shopId, String productNo, String productCode, String productName, String imgPath) {
-        this.shopId = shopId;
+
+    public Product(Long shopNo, String productNo, String productCode, String productName, List<String> listIamge) {
+        logger.info("api.Product class constructor called");
+
+        this.shopNo = shopNo;
         this.productNo = productNo;
         this.productCode = productCode;
         this.productName = productName;
-        this.imgPath = imgPath;
+        this.listIamge = listIamge;
         logger.info("api.Product instance constructed");
+
     }
 
-    public Long getShopId() {
-        return shopId;
+    public Long getShopNo() {
+        return shopNo;
     }
 
     public String getProductNo() {
@@ -43,7 +51,18 @@ public class Product {
         return productName;
     }
 
-    public String getImgPath() {
-        return imgPath;
+    public List<String> getListIamge() {
+        return listIamge;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "shopNo=" + shopNo +
+                ", productNo='" + productNo + '\'' +
+                ", productCode='" + productCode + '\'' +
+                ", productName='" + productName + '\'' +
+                ", listIamge=" + listIamge +
+                '}';
     }
 }

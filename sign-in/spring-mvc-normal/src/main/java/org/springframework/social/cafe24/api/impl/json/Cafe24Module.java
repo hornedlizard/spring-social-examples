@@ -16,9 +16,13 @@ public class Cafe24Module extends SimpleModule {
 
     @Override
     public void setupModule(SetupContext setupContext) {
+        logger.info("setupModule called...");
+        logger.info("setupContext.getMapperVersion().getArtifactId(): "  + setupContext.getMapperVersion().getArtifactId());
+        logger.info("setupContext.getMapperVersion().getGroupId(): "  + setupContext.getMapperVersion().getGroupId());
+        logger.info("setupContext.getMapperVersion().toFullString(): "  + setupContext.getMapperVersion().toFullString());
+        logger.info("setupContext.getMapperVersion().isSnapshot(): "  + setupContext.getMapperVersion().isSnapshot());
 
         setupContext.setMixInAnnotations(Product.class, ProductMixin.class);
 
-        super.setupModule(setupContext);
     }
 }

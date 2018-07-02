@@ -51,6 +51,7 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
         if (userId != null) {
             logger.info("preHandle userId != null");
 
+            /*  */
             if (!repository
                     .findUserIdsConnectedTo("cafe24", Collections.singleton(userId))
                     .isEmpty()) {
@@ -66,6 +67,7 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
                 userCookieGenerator.removeCookie(response);
             }
         } else {
+            /* 실제 접속한 유저를 등록하는 과정 */
             userId = Cafe24OAuth2Template.getMallId();
             SecurityContext.setCurrentUser(new User(userId));
             logger.info("preHandle userId == null");

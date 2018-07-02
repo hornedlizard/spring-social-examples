@@ -69,32 +69,6 @@ public class SocialContext implements SocialConfigurer {
     }
 
 
-    /*
-    *//**
-     * The UserIdSource determines the account ID of the user. The example application
-     * uses the username as the account ID.
-     *//*
-    @Override
-    public UserIdSource getUserIdSource() {
-        logger.info("getUserIdSource called...");
-        UserIdSource userIdSource= new SessionIdUserIdSource();
-        logger.info("userIdSource.getUserId(): " + userIdSource.getUserId());
-        return userIdSource;
-    }
-
-    private static final class SessionIdUserIdSource implements UserIdSource {
-        @Override
-        public String getUserId() {
-
-            RequestAttributes request = RequestContextHolder.currentRequestAttributes();
-            String uuid = (String) request.getAttribute("_socialUserUUID", RequestAttributes.SCOPE_SESSION);
-            if (uuid == null) {
-                uuid = UUID.randomUUID().toString();
-                request.setAttribute("_socialUserUUID", uuid, RequestAttributes.SCOPE_SESSION);
-            }
-            return uuid;
-        }
-    }*/
 
     @Bean
     @Scope(value="request", proxyMode=ScopedProxyMode.TARGET_CLASS)
@@ -111,16 +85,6 @@ public class SocialContext implements SocialConfigurer {
         return jdbcUsersConnectionRepository.createConnectionRepository(getUserIdSource().getUserId());
     }
 
-   /* @Bean
-    public JdbcUsersConnectionRepository jdbcUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
-        JdbcUsersConnectionRepository repository = new JdbcUsersConnectionRepository(
-                dataSource,
-                connectionFactoryLocator,
-                Encryptors.noOpText()
-        );
-        return repository;
-    }*/
-
     @Override
     public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
         logger.info("getUsersConnectionRepository started..." );
@@ -132,9 +96,6 @@ public class SocialContext implements SocialConfigurer {
         );
         jdbcUsersConnectionRepository = repository;
         repository.setConnectionSignUp(new ProviderUserIdConnectionSignUp());
-       /* InMemoryUsersConnectionRepository repository =
-                new InMemoryUsersConnectionRepository(connectionFactoryLocator);
-        repository.setConnectionSignUp(new ProviderUserIdConnectionSignUp());*/
 
         return repository;
     }
@@ -145,7 +106,6 @@ public class SocialContext implements SocialConfigurer {
      */
     @Bean
     public ConnectController connectController(ConnectionFactoryLocator connectionFactoryLocator, ConnectionRepository connectionRepository) {
-//        ConnectController connectController = new ConnectController(connectionFactoryLocator, connectionRepository);
         ConnectController connectController = new LoginController(connectionFactoryLocator, connectionRepository);
         connectController.addInterceptor(new Cafe24Interceptor());
 

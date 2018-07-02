@@ -160,23 +160,27 @@ public class Cafe24OAuth2Template extends OAuth2Template {
         }
         logger.info("exchangeForAccess 4");
 
+        /* 헤더, Access Token 발급 받기 위한 url, restTemplate 준ㅂ;*/
         HttpHeaders headers = new HttpHeaders();
-
         String accessTokenUrl = getAccessTokenUrl();
         RestTemplate restTemplate = getRestTemplate();
 
+        /* 실제 헤더 값 넣기 */
         headers.set("Authorization", "Basic " + base64EncodedStr);
         // headersForAccessToken.add("Content-Type", "application/x-www-form-urlencoded");
         /* 헤더에 Content-Type 설정 */
         headers.setContentType(new MediaType("application", "x-www-form-urlencoded"));
+//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 
-        restTemplate.setDefaultUriVariables(params);
+//        restTemplate.setDefaultUriVariables(params);
 
         //MultiValueMap<String, String>는 파라미터의 타입
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
 //        restTemplate.exchange(accessTokenUrl, HttpMethod.POST, entity, String.class);
 
+
+        /* 실제로 AcccessTokenUrl로 직접 요청하고 응답을 받는 부분 */
         ResponseEntity<Map> responseEntity = restTemplate.exchange(accessTokenUrl, HttpMethod.POST, entity, Map.class);
 
    /*     logger.info("exchangeForAccess accessGrant map.get(access_token): "  + map.get("access_token"));

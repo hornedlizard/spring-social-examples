@@ -21,8 +21,10 @@ public class ProductTemplate implements ProductOperations {
     @Override
     public List<Product> getProducts() {
         logger.info("getProducts called...");
-        List<Product> products;
-        products = cafe24.fetchObjects("products", Product.class, null);
+
+        logger.info("getProducts cafe24.fetchObjects(products, Product.class, null)...");
+
+        List<Product> products = cafe24.fetchObjects("products", Product.class, null);
         if (products == null) {
             logger.info("getProducts products empty...");
 

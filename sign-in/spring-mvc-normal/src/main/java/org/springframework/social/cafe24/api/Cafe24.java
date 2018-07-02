@@ -4,10 +4,8 @@ import org.springframework.social.ApiBinding;
 
 import java.util.List;
 
-public interface Cafe24 extends ApiBinding {
+public interface Cafe24 extends Cafe24Api, ApiBinding {
 
-
-    <T> List<T> fetchObjects(String connectionType, Class<T> type, String... fields);
 
     String getMallId();
 
