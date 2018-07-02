@@ -17,7 +17,7 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
 
     private final UserCookieGenerator userCookieGenerator = new UserCookieGenerator();
 
-    private static final String CONTEXT_PATH = "/spring-social-normal-mvc";
+    private static String CONTEXT_PATH;
 
     public UserInterceptor(UsersConnectionRepository connectionRepository) {
         this.repository = connectionRepository;
@@ -25,6 +25,7 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        CONTEXT_PATH = request.getContextPath();
         logger.info("UserInterceptor preHandle called ");
 //        return super.preHandle(request, response, handler);
         String currUrl = CONTEXT_PATH + request.getServletPath();
